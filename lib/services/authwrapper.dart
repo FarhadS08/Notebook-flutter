@@ -4,6 +4,9 @@ import 'package:notebook/screens/register.dart';
 import 'package:notebook/screens/home.dart';
 
 class AuthWrapper extends StatelessWidget {
+
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
+
   @override
   Widget build (BuildContext context){
     return StreamBuilder(
@@ -13,7 +16,7 @@ class AuthWrapper extends StatelessWidget {
           if(snapshot.data?.uid == null){
             return RegistrationScreen();
           }else{
-            return HomePage();
+            return HomePage(userId: userId);
           }
         }
         return const CircularProgressIndicator(color: Colors.teal);
