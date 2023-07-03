@@ -1,8 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:notebook/screens/home.dart';
-import 'package:notebook/screens/register.dart';
 import 'package:notebook/services/auth.dart';
+import 'package:notebook/services/authwrapper.dart';
 import 'package:notebook/services/firestore.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: RegistrationScreen(),
+      home: AuthWrapper(),
       theme: ThemeData(
         scaffoldBackgroundColor: Color(0xffF2F2F2),
         colorScheme: ColorScheme.fromSwatch(
