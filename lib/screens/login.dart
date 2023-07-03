@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:notebook/models/user.dart';
 import 'package:notebook/screens/register.dart';
+import 'package:notebook/services/auth.dart';
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
+
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isloadind = false;
+
+  UserModel? userModel;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +43,13 @@ class LoginScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: Colors.grey)),
                   const SizedBox(height: 50.0),
                   TextFormField(
+                    controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter email address";
+                      }
+                      return null;
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter your email',
                       labelText: 'Email',
@@ -47,6 +69,13 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
+                    controller: _passwordController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter password";
+                      }
+                      return null;
+                    },
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Enter your password',
@@ -66,7 +95,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  Container(
+                  _isloadind ? CircularProgressIndicator(color: Colors.teal) : SizedBox(
                     height: 42,
                     width: double.infinity,
                     child: ElevatedButton(
@@ -78,14 +107,29 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),
-                      onPressed: () {
-                        // handle registration logic
+                      onPressed: () async {
+                        if (_formkey.currentState!.validate()) {
+                          setState(() {
+                            _isloadind = true;
+                          });
+                          userModel =
+                              await Provider.of<Auth>(context, listen: false)
+                                  .signInUser(
+                            _emailController.text,
+                            _passwordController.text,
+                          );
+                          if(mounted){
+                            setState(() {
+                              _isloadind = false;
+                            });
+                          }
+                        }
                       },
                       child: const Text('Login'),
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  Row (
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -95,15 +139,16 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationScreen()));
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegistrationScreen()));
                         },
                         child: Text(
                           'Sign Up',
                           style: TextStyle(
-                              color: Colors.teal,
-                              fontWeight: FontWeight.w600
-                          ),
+                              color: Colors.teal, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],
