@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notebook/models/notes.dart';
+import 'package:notebook/screens/update_note.dart';
 import 'package:notebook/services/firestore.dart';
 import 'package:provider/provider.dart';
 
@@ -56,24 +57,24 @@ class NotePads extends StatelessWidget {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: (){
-                                    firestore.removeNotes(userId, notesModel[index].id);
+                                  onTap: () {
+                                    firestore.removeNotes(
+                                        userId, notesModel[index].id);
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      padding: EdgeInsets.all(1),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Theme.of(context).scaffoldBackgroundColor
-                                      ),
-                                      child: Icon(
-                                        Icons.close_rounded,
-                                        color: Colors.white,
-                                        size: 20.0,
-                                      ),
-                                    )
-                                  ),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        padding: EdgeInsets.all(1),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor),
+                                        child: Icon(
+                                          Icons.close_rounded,
+                                          color: Colors.grey.shade500,
+                                          size: 20.0,
+                                        ),
+                                      )),
                                 ),
                               ],
                             ),
@@ -91,9 +92,24 @@ class NotePads extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(Icons.edit, color: Colors.teal),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateScreen(
+                                      usedId: userId,
+                                      id: notesModel[index].id,
+                                      note: notesModel[index].note,
+                                      title: notesModel[index].title,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(Icons.edit, color: Colors.teal),
+                              ),
                             ),
                           ],
                         ),
