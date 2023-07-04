@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:notebook/models/notes.dart';
 
 class FirestoreService extends ChangeNotifier {
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Update note
-  Future<void> updateTodo(String userId, String id, String text) async {
+  Future<void> updateNotes(
+      String userId, String id, String title, String note) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .collection('todos')
+          .collection('notes')
           .doc(id)
-          .update({'text': text});
+          .update({
+        'title': title,
+        'note': note,
+      });
       print('Todo updated successfully');
       notifyListeners();
     } catch (e) {
@@ -26,12 +29,13 @@ class FirestoreService extends ChangeNotifier {
   // Add note
   Future<void> addNotes(String userId, NotesModel notesModel) async {
     try {
-      await _firestore.collection('users')
+      await _firestore
+          .collection('users')
           .doc(userId)
           .collection('notes')
           .add(notesModel.toMap());
       notifyListeners();
-    }catch(e){
+    } catch (e) {
       throw e;
     }
   }
@@ -42,10 +46,11 @@ class FirestoreService extends ChangeNotifier {
       return FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .collection('todos')
+          .collection('notes')
           .snapshots()
-          .map((QuerySnapshot snapshot) =>
-          snapshot.docs.map((doc) => NotesModel.fromDocument(doc)).toList());
+          .map((QuerySnapshot snapshot) => snapshot.docs
+              .map((doc) => NotesModel.fromDocument(doc))
+              .toList());
     } catch (e) {
       print('Error getting todos: $e');
       throw e;
@@ -53,19 +58,17 @@ class FirestoreService extends ChangeNotifier {
   }
 
   // Remove note
-  Future<void> removeTodo(String userId, String id) async {
+  Future<void> removeNotes(String userId, String id) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .collection('todos')
+          .collection('notes')
           .doc(id)
           .delete();
+      notifyListeners();
     } catch (e) {
       throw e;
     }
-    notifyListeners();
   }
-
-
 }
